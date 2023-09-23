@@ -1,2 +1,2 @@
 # VBA-challenge
-VBA Opening Proce Challenge
+VBA Opening Price Challenge
