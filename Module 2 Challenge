@@ -1,0 +1,104 @@
+Sub Stonks()
+
+
+closing_price = 0
+'keeps track of how many different tickers have been seen, starting at 1
+ticker_counter = 1
+ticker_vol = 0
+yearly_change = 0
+
+greatest_perc_inc = 0
+greatest_perc_dec = 0
+greatest_vol = 0
+percent_change = 0
+
+
+For Each w In Worksheets
+
+    closing_price = 0
+    'keeps track of how many different tickers have been seen, starting at 1
+    ticker_counter = 1
+    ticker_vol = 0
+    yearly_change = 0
+
+    greatest_perc_inc = 0
+    greatest_perc_dec = 0
+    greatest_vol = 0
+    percent_change = 0
+    opening_price = w.Cells(2, 3).Value
+    
+    
+    'finds last row of data set
+    last_row = w.Cells(Rows.Count, 1).End(xlUp).Row
+    For i = 2 To last_row
+
+        'calculates ticker volume
+        ticker_vol = ticker_vol + w.Cells(i, 7).Value
+        
+        If w.Cells(i, 1).Value <> w.Cells(i + 1, 1).Value Then
+        
+            'plus 1 to put in right column
+            
+            'assigns ticker abbreviation
+            w.Cells(ticker_counter + 1, 9).Value = w.Cells(i, 1).Value
+            
+            'keeps track of yearly change and closing price
+            closing_price = w.Cells(i, 6).Value
+            yearly_change = closing_price - opening_price
+            w.Cells(ticker_counter + 1, 10).Value = yearly_change
+            
+            If yearly_change > 0 Then
+                w.Cells(ticker_counter + 1, 10).Interior.ColorIndex = 4
+            ElseIf yearly_change < 0 Then
+                w.Cells(ticker_counter + 1, 10).Interior.ColorIndex = 3
+            End If
+            
+            
+            'assigns percent change
+            percent_change = yearly_change / opening_price
+            w.Cells(ticker_counter + 1, 11).Value = percent_change
+            
+            'assigns total stock volume
+            w.Cells(ticker_counter + 1, 12).Value = ticker_vol
+            
+    
+            'find greatest % increase
+            If percent_change > greatest_perc_inc Then
+                greatest_perc_inc = percent_change
+                w.Cells(2, 16).Value = w.Cells(i, 1).Value
+                w.Cells(2, 17).Value = greatest_perc_inc
+            End If
+            
+            'find greatest % decrease
+            If percent_change < greatest_perc_dec Then
+                greatest_perc_dec = percent_change
+                w.Cells(3, 16).Value = w.Cells(i, 1).Value
+                w.Cells(3, 17).Value = greatest_perc_dec
+            End If
+            
+            'find greatest total volume
+            If ticker_vol > greatest_vol Then
+                greatest_vol = ticker_vol
+                w.Cells(4, 16).Value = w.Cells(i, 1).Value
+                w.Cells(4, 17).Value = greatest_vol
+            End If
+            
+            
+            'setting up for next ticker
+            
+            ticker_counter = ticker_counter + 1
+            
+            'sets opening price as the first cell in new group of tickers
+            opening_price = w.Cells(i + 1, 3).Value
+            
+            'sets values back to 0
+            ticker_vol = 0
+            yearly_change = 0
+            closing_price = 0
+            percent_change = 0
+            
+        End If
+
+
+    Next i
+Next w
